@@ -7,10 +7,13 @@ from datetime import datetime, timedelta
 from google_auth_oauthlib.flow import InstalledAppFlow
 from apiclient.discovery import build
 
+from dotenv import load_dotenv
+load_dotenv()
+
 print('primo')
 
 timestr = time.strftime("%Y%m%d-%H%M%S")
-SITE_URL = "https://www.venditapianteonline.it/"
+SITE_URL = os.environ.get("GSC_SITE_URL")
 print(SITE_URL)
 print(timestr)
 # There are only two OAuth Scopes for the Google Search Console API
@@ -27,7 +30,7 @@ REDIRECT_URI = 'urn:ietf:wg:oauth:2.0:oob'
 try:
  credentials = pickle.load(open("config_file/credentials.pickle", "rb"))
 except (OSError, IOError) as e:
-    flow = InstalledAppFlow.from_client_secrets_file("1-config-gsc/client_secret_555711575796-j821ki3bi9glb8tnp787i4r08b1od81i.apps.googleusercontent.com.json", scopes=OAUTH_SCOPE)
+    flow = InstalledAppFlow.from_client_secrets_file("config_file/client_secret_555711575796-j821ki3bi9glb8tnp787i4r08b1od81i.apps.googleusercontent.com.json", scopes=OAUTH_SCOPE)
     credentials = flow.run_console()
     pickle.dump(credentials, open("config_file/credentials.pickle", "wb"))
 
@@ -49,7 +52,7 @@ output_rows = []
 # 182 - 89
 # 88 - 1
 
-start_date = datetime.now() + timedelta(days=-370)
+start_date = datetime.now() + timedelta(days=-6)
 end_date = datetime.now() + timedelta(days=-3)
 
 #print(start_date)

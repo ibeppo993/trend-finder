@@ -15,4 +15,4 @@ timestr = time.strftime('%Y%m%d-%H%M%S')
 file_trends = f'{output_files}/{file_name}'
 file_trends_t = f'{output_files}/{file_name_transpone}'
 
-pd.read_csv(file_trends, header=None, sep=';', low_memory=False).T.to_csv(file_trends_t, header=False, index=False, sep=';')
+pd.read_csv(file_trends, header=None, sep='\t', low_memory=False).T.to_csv(file_trends_t, header=False, index=False, sep='\t')

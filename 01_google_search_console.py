@@ -52,7 +52,7 @@ output_rows = []
 # 182 - 89
 # 88 - 1
 
-start_date = datetime.now() + timedelta(days=-6)
+start_date = datetime.now() + timedelta(days=-5)
 end_date = datetime.now() + timedelta(days=-3)
 
 #print(start_date)
@@ -76,7 +76,7 @@ def date_range(start_date, end_date, delta=timedelta(days=1)):
 for date in date_range(start_date, end_date):
     date = date.strftime("%Y-%m-%d")
     print(date)
-    print('pausa 5 secondi')
+    print('pausa 10 secondi')
     time.sleep(10)
     i = 0
     while True:

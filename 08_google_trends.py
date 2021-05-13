@@ -1,118 +1,114 @@
-import pytrends
+import pytrends, io, sqlite3, urllib, time, datetime, csv, os, random
 from pytrends.request import TrendReq
 import pandas as pd
-import time
-import datetime
 from datetime import date
-import csv, os
+from datetime import datetime
 from pytrends import *
+from trends_prepare import create_db_and_folder
 from dotenv import load_dotenv
 load_dotenv()
+
+create_db_and_folder()
 
 file_kw = os.environ.get("file_kw_trend")
 output_files = os.environ.get("output_files_trend")
 file_name = os.environ.get("file_name_trend")
-file_proxies = os.environ.get("file_proxies_trend")
+file_proxies = os.environ.get("file_proxies")
+db_name_keyword = os.environ.get("db_name_keyword")
+db_name_proxy = os.environ.get("db_name_proxy")
+
 timestr = time.strftime('%Y%m%d-%H%M%S')
 
+
+def select_proxy():
+    conn = sqlite3.connect(db_name_proxy)
+    c = conn.cursor()
+    data = pd.read_sql_query(
+        "SELECT PROXY FROM PROXY_LIST WHERE TIME = ( SELECT MIN(TIME) FROM PROXY_LIST);", conn)
+    # print(type(data['PROXY'].iat[0]))
+    global proxy
+    proxy = (data['PROXY'].iat[0])
+    print(f'---------------------Request IP is {proxy}')
+    timestr_now = str(datetime.now())
+    # print(timestr_now)
+    # global timestr
+    timestr = datetime.fromisoformat(timestr_now).timestamp()
+    # print(timestr)
+    c.execute("Update PROXY_LIST set TIME = ? where PROXY = ?", (timestr, proxy))
+    conn.commit()
+    c.execute("Update PROXY_LIST set TIME = ? where PROXY = ?",
+              (timestr, proxy,))
+    conn.commit()
+    # print('pausa 1 sec')
+    conn.close()
+
+
+def select_keyword():
+    print('-------------------------')
+    conn = sqlite3.connect(db_name_keyword)
+    c = conn.cursor()
+    data = pd.read_sql_query(
+        "SELECT KEYWORDS FROM KEYWORDS_LIST WHERE SUM <> 2 AND CHECKING = 0 LIMIT 1;", conn)
+    # print(type(data['KEYWORDS'].iat[0]))
+    global keyword
+    keyword = (data['KEYWORDS'].iat[0])
+    c.execute("Update KEYWORDS_LIST set CHECKING = 1 where KEYWORDS = ?", (keyword,))
+    conn.commit()
+    conn.close()
+    # print(new_keyword)
+
+
 #
 #
-#Trend di ricerche nel tempo
+# Trend di ricerche nel tempo
 #
 #
+while True:
+	select_keyword()
+	select_proxy()
 
-#creazione lista da file txt
-# with open('kw1-1.txt') as file:
-#     searches  = [searches .rstrip('\n') for searches  in file]
-# print(searches)
+	print(f'keyword ------- {keyword}')
+	single_search=keyword
+	dataset = []
 
-f = open(file_kw, 'r', encoding='utf8', errors='ignore')
-searches= f.read().split('\n')
+	proxies = []
+	proxies.append(proxy)
+	print(proxies)
 
-if not os.path.exists(output_files):
-    os.makedirs(output_files)
+	kw_list = []
+	kw_list.append(keyword)
+	print(kw_list)
+	# print(keyword)
+	# pytrend = TrendReq(hl='it-IT', tz=360)
+	pytrend =TrendReq(hl='it-IT', tz=360, timeout=(10,25), proxies=proxies, retries=10, backoff_factor=0.1)#, requests_args={'verify':False})
+	pytrend.build_payload(kw_list, cat=0, timeframe='today 5-y', geo='', gprop='')
+	data = pytrend.interest_over_time()
+	# print(data)
+	if not data.empty:
+		# data.drop(labels=['isPartial'], axis='columns')
+		data = data.drop(labels=['isPartial'],axis='columns')
+		dataset.append(data)
 
-#with proxies
-with open(file_proxies , encoding='utf-8') as f:
-    proxies = [line.rstrip() for line in f]
+	result = pd.concat(dataset, axis=1)
+	# print(result.info())
+	# print(result)
 
-#pytrend =TrendReq(hl='it-IT', tz=360, timeout=(10,25), proxies=proxies, retries=10, backoff_factor=0.1)#, requests_args={'verify':False})
+	timestr = time.strftime('%Y%m%d-%H')
+	if os.path.isfile(f'output_data/08_google_trends_{timestr}.csv'):
+		df_file = pd.read_csv(f'output_data/08_google_trends_{timestr}.csv', sep='\t', index_col='date')
+		# print(df_file)
+		# print(df_file.info())
+		df_file.index = df_file.index.astype(str)
+		df_file.index = df_file.index.str.replace(' 00:00:00', '')
+		# new_result = pd.concat([df_file,result], axis=1)
+		result.index = result.index.astype(str)
+		result.index = result.index.str.replace(' 00:00:00', '')
+		new_result = pd.concat([df_file,result], axis=1)
+		# print(new_result.info())
+		new_result.to_csv(f'output_data/08_google_trends_{timestr}.csv', sep='\t')
 
-# without proxy
-pytrend = TrendReq(hl='it-IT', tz=360)
+		print('--------------DataFrame concatenato')
 
-groupkeywords = list(zip(*[iter(searches)]*1))
-#print(groupkeywords)
-groupkeywords = [list(x) for x in groupkeywords]
-#print(groupkeywords)
-
-dicti = {}
-i = 1
-
-sec_wait_time=1
-pri_wait_time=6
-
-numyears=5
-numdays = 7
-numweeks = 52
-total_time_range = numdays * numweeks * numyears
-end_date= date.today()
-today_date = date.today()
-end_date = today_date
-begin_date = end_date - datetime.timedelta(days = total_time_range-7)
-user_timeframe = begin_date.strftime('%Y-%m-%d')+' '+end_date.strftime('%Y-%m-%d')
-
-def run_chunk(frm,to):
-	global dicti
-	global i
-	for ind in range(frm,to):
-		try:
-			trending=groupkeywords[ind]
-			print(i," : ",trending)
-			pytrend.build_payload(trending,timeframe=user_timeframe , geo = 'IT')
-			dicti[i] = pytrend.interest_over_time()
-			# print( dicti[i] )
-		except:
-			print("--------------")
-			pass
-		i+=1
-		time.sleep(sec_wait_time)
-		print("Delay : ",sec_wait_time," s")
-
-
-length = len(groupkeywords)
-l_limit=0
-limit_gap=5
-r_limit=l_limit+limit_gap
-
-if r_limit>length:
-	r_limit=length
-
-cnt = 0
-while r_limit<=length:
-	run_chunk(l_limit,r_limit)
-	cnt+=limit_gap
-	if r_limit>=length:
-		break
-	l_limit=r_limit
-	if r_limit+limit_gap<=length:
-		r_limit+=limit_gap
 	else:
-		r_limit=length
-
-	if dicti!={}:
-		result = pd.concat(dicti, axis=1)
-		result.columns = result.columns.droplevel(0)
-		if 'isPartial'in result.columns:
-			result = result.drop('isPartial', axis = 1)
-		result.to_csv(f'{output_files}/{file_name}', sep=';')
-		#pd.read_csv(f'{output_files}/{timestr}-3-gtrends.csv', header=None, sep=';').T.to_csv(f'{output_files}/{timestr}-3-gtrends.csv', header=False, index=False, sep=';')
-		time.sleep(pri_wait_time )
-		print("Delay : ",pri_wait_time," s")
-	if cnt>100:
-		cnt=0
-		print("Delay Starting for 1min: ")
-		time.sleep(1*60)
-		print("Delay Starting for 1min: ")
-
-#Transposizione righe con colonne
+		result.to_csv(f'output_data/08_google_trends_{timestr}.csv', sep='\t')
+		print('--------------DataFrame scritto')

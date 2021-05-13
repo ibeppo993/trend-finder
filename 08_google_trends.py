@@ -81,7 +81,7 @@ while True:
 	# print(keyword)
 	# pytrend = TrendReq(hl='it-IT', tz=360)
 	pytrend =TrendReq(hl='it-IT', tz=360, timeout=(10,25), proxies=proxies, retries=10, backoff_factor=0.1)#, requests_args={'verify':False})
-	pytrend.build_payload(kw_list, cat=0, timeframe='today 5-y', geo='', gprop='')
+	pytrend.build_payload(kw_list, cat=0, timeframe='today 5-y', geo='IT-IT', gprop='')
 	data = pytrend.interest_over_time()
 	# print(data)
 	if not data.empty:

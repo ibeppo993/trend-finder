@@ -89,26 +89,30 @@ while True:
 		data = data.drop(labels=['isPartial'],axis='columns')
 		dataset.append(data)
 
-	result = pd.concat(dataset, axis=1)
-	# print(result.info())
-	# print(result)
+	try:
+		result = pd.concat(dataset, axis=1)
+		# print(result.info())
+		# print(result)
 
-	timestr = time.strftime('%Y%m%d-%H')
-	if os.path.isfile(f'output_data/08_google_trends_{timestr}.csv'):
-		df_file = pd.read_csv(f'output_data/08_google_trends_{timestr}.csv', sep='\t', index_col='date')
-		# print(df_file)
-		# print(df_file.info())
-		df_file.index = df_file.index.astype(str)
-		df_file.index = df_file.index.str.replace(' 00:00:00', '')
-		# new_result = pd.concat([df_file,result], axis=1)
-		result.index = result.index.astype(str)
-		result.index = result.index.str.replace(' 00:00:00', '')
-		new_result = pd.concat([df_file,result], axis=1)
-		# print(new_result.info())
-		new_result.to_csv(f'output_data/08_google_trends_{timestr}.csv', sep='\t')
+		timestr = time.strftime('%Y%m%d-%H')
+		if os.path.isfile(f'output_data/08_google_trends_{timestr}.csv'):
+			df_file = pd.read_csv(f'output_data/08_google_trends_{timestr}.csv', sep='\t', index_col='date')
+			# print(df_file)
+			# print(df_file.info())
+			df_file.index = df_file.index.astype(str)
+			df_file.index = df_file.index.str.replace(' 00:00:00', '')
+			# new_result = pd.concat([df_file,result], axis=1)
+			result.index = result.index.astype(str)
+			result.index = result.index.str.replace(' 00:00:00', '')
+			
+			new_result = pd.concat([df_file,result], axis=1)
+			# print(new_result.info())
+			new_result.to_csv(f'output_data/08_google_trends_{timestr}.csv', sep='\t')
+			print('--------------DataFrame concatenato')
 
-		print('--------------DataFrame concatenato')
 
-	else:
-		result.to_csv(f'output_data/08_google_trends_{timestr}.csv', sep='\t')
-		print('--------------DataFrame scritto')
+		else:
+			result.to_csv(f'output_data/08_google_trends_{timestr}.csv', sep='\t')
+			print('--------------DataFrame scritto')
+	except:
+		print('--------------DataFrame VUOTO')

@@ -3,3 +3,4 @@ config_file/
 output_data/
 input_data/
 teporary_file/
+__pycache__/

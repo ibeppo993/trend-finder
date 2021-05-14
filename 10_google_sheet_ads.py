@@ -18,8 +18,8 @@ current_file = f'{path}6_google_ads_export-Volume.csv'
 #
 #
 #creazione dataframe
-df = pd.read_csv(current_file, sep='\t', encoding='UTF-8')
-del df['Monthly Searches']
+cols_to_use = [0,1,3,4]
+df = pd.read_csv(current_file,usecols=cols_to_use, sep='\t', encoding='UTF-8')
 #print(df.info())
 #conteggio righe df
 numbers_of_rows = len(df)
@@ -45,8 +45,7 @@ wks.cols=cols #colonna O
 wks.clear()
 
 #scrittura con rige dataframe
-cols_to_use = [0,1,3,4]
-df_row = pd.read_csv (current_file, sep='\t',usecols= cols_to_use, encoding='UTF-8', header=None, low_memory=False)
+df_row = pd.read_csv (current_file, sep='\t',usecols=cols_to_use, encoding='UTF-8', header=None, low_memory=False)
 #print(df_row.info())
 df_row = df_row.replace(np.nan, 0)
 

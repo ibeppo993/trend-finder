@@ -1,16 +1,37 @@
-# https://groups.google.com/g/adwords-api/c/LbeNND7ovKY
-# https://developers.google.com/adwords/api/docs/appendix/geotargeting
-# https://developers.google.com/adwords/api/docs/reference/v201809/TargetingIdeaService.TargetingIdeaSelector
+#https://groups.google.com/g/adwords-api/c/LbeNND7ovKY
+#https://developers.google.com/adwords/api/docs/appendix/geotargeting
+#https://developers.google.com/adwords/api/docs/reference/v201809/TargetingIdeaService.TargetingIdeaSelector
 
-import _locale
-import googleads
+import _locale, sqlite3, googleads, traceback, time, os
 import pandas as pd
-import traceback
 from googleads import adwords
 from googleads import oauth2
-import time, os
+from ads_prepare import create_db_ads
 from dotenv import load_dotenv
 load_dotenv()
+
+n_keywords = 100
+
+create_db_ads()
+
+db_name_keyword = os.environ.get("db_name_keyword_ads")
+
+def select_keyword():
+    print('-------------------------')
+    conn = sqlite3.connect(db_name_keyword)
+    c = conn.cursor()
+    global keywords_list_db
+    keywords_list_db = []
+    for x in range(0, n_keywords):
+        data = pd.read_sql_query("SELECT KEYWORDS FROM KEYWORDS_LIST WHERE SUM <> 2 AND CHECKING = 0 LIMIT 1;", conn)
+        #print(type(data['KEYWORDS'].iat[0]))
+        keyword = (data['KEYWORDS'].iat[0])
+        keywords_list_db.append(keyword)
+        c.execute("Update KEYWORDS_LIST set CHECKING = 1 where KEYWORDS = ?", (keyword,))
+    conn.commit()
+    conn.close()
+    print(keywords_list_db)
+
 
 
 #locations_id = '2156' #Cina CN
@@ -191,50 +212,35 @@ if __name__ == '__main__':
     DEVELOPER_TOKEN = os.environ.get("DEVELOPER_TOKEN_ADS")
     CLIENT_CUSTOMER_ID = os.environ.get("CLIENT_CUSTOMER_ID_ADS")
 
-    with open('input_data/keywords.txt', 'r') as listline:
-        timestr = time.strftime('%Y%m%d-%H%M%S')
-        #print(timestr)
-        filecontents = listline.readlines()
-        #print(filecontents)
-        list_no_n = [x.replace('\n', '') for x in filecontents]
-        #print(list_no_n)
-        n = 500
-        final_2 = [list_no_n[i * n:(i + 1) * n] for i in range((len(list_no_n) + n - 1) // n )]
-        #print(final_2)
-        for keyword_list in final_2:
-            #print(keyword_list)
-            try:
-                volume_puller = searchVolumePuller(CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN, DEVELOPER_TOKEN, CLIENT_CUSTOMER_ID)
-                adwords_client = volume_puller.get_client ( )
-                targeting_service = volume_puller.get_service ('TargetingIdeaService', adwords_client)
-                kw_sv_df = volume_puller.get_search_volume (targeting_service, keyword_list)
-                #kw_sv_df = pd.json_normalize(kw_sv_df2['Monthly Searches'])
-                print(kw_sv_df)
-                my_file = 'output_data/6_google_ads_export-Volume.csv'
-                isfile = os.path.isfile(my_file)
-                #print(isfile)
-                if isfile == False:
-                    # path exists
-                    kw_sv_df.to_csv(my_file, index=False, encoding='utf-8', sep=';', decimal=',')
-                else:
-                    kw_sv_df.to_csv(my_file, mode='a', index=False, header=False, encoding='utf-8', sep=';', decimal=',')
-                print('pausa 6 minuti')
-                time.sleep(360)
-            except:
-                print('pausa 5 minuti blocco temporaneo api')
-                time.sleep(300)
-                volume_puller = searchVolumePuller(CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN, DEVELOPER_TOKEN, CLIENT_CUSTOMER_ID)
-                adwords_client = volume_puller.get_client ( )
-                targeting_service = volume_puller.get_service ('TargetingIdeaService', adwords_client)
-                kw_sv_df = volume_puller.get_search_volume (targeting_service, keyword_list)
-                print(kw_sv_df)
-                my_file = 'output_data/6_google_ads_export-Volume.csv'
-                isfile = os.path.isfile(my_file)
-                #print(isfile)
-                if isfile == False:
-                    # path exists
-                    kw_sv_df.to_csv(my_file, index=False, encoding='utf-8', sep=';', decimal=',')
-                else:
-                    kw_sv_df.to_csv(my_file, mode='a', index=False, header=False, encoding='utf-8', sep=';', decimal=',')
-                print('pausa 6 minuti')
-                time.sleep(360)
+    timestr = time.strftime('%Y%m%d-%H%M%S')
+    #print(timestr)
+
+
+    while True:
+        try:
+            select_keyword()
+            volume_puller = searchVolumePuller(CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN, DEVELOPER_TOKEN, CLIENT_CUSTOMER_ID)
+            adwords_client = volume_puller.get_client ( )
+            targeting_service = volume_puller.get_service ('TargetingIdeaService', adwords_client)
+            kw_sv_df = volume_puller.get_search_volume (targeting_service, keywords_list_db)
+            #kw_sv_df = pd.json_normalize(kw_sv_df2['Monthly Searches'])
+            print(kw_sv_df)
+            my_file = 'output_data/6_google_ads_export-Volume.csv'
+            isfile = os.path.isfile(my_file)
+            #print(isfile)
+            if isfile == False:
+                # path exists
+                kw_sv_df.to_csv(my_file, index=False, encoding='utf-8', sep='\t', decimal=',')
+            else:
+                kw_sv_df.to_csv(my_file, mode='a', index=False, header=False, encoding='utf-8', sep='\t', decimal=',')
+            print('pausa 10 secondi')
+            time.sleep(10)
+        except:
+            for kw in keywords_list_db:
+                conn = sqlite3.connect(db_name_keyword)
+                c = conn.cursor()
+                c.execute("Update KEYWORDS_LIST set CHECKING = 0 where KEYWORDS = ?",(kw,))
+                conn.commit()
+
+            print('pausa 10 secondi')
+            time.sleep(10)

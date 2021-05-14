@@ -9,7 +9,7 @@ load_dotenv()
 json_authentication_file = os.environ.get("json_authentication_file")
 python_customer_metrics_1 = os.environ.get("python_customer_metrics_1")
 path = 'output_data/'
-current_file = f'{path}09_zz_finish.csv'
+current_file = f'{path}6_google_ads_export-Volume.csv'
 
 
 #
@@ -19,6 +19,8 @@ current_file = f'{path}09_zz_finish.csv'
 #
 #creazione dataframe
 df = pd.read_csv(current_file, sep='\t', encoding='UTF-8')
+del df['Monthly Searches']
+#print(df.info())
 #conteggio righe df
 numbers_of_rows = len(df)
 #print(numbers_of_rows)
@@ -33,7 +35,7 @@ column_sheet = numbers_of_columns
 gc = pygsheets.authorize(service_file=json_authentication_file)
 # Open spreadsheet and then worksheet
 sh = gc.open_by_key(python_customer_metrics_1)
-wks = sh.worksheet_by_title('row_data')
+wks = sh.worksheet_by_title('row_ads_data')
 
 #Creazione riche da csv ecommerce
 rows = row_sheet
@@ -43,8 +45,10 @@ wks.cols=cols #colonna O
 wks.clear()
 
 #scrittura con rige dataframe
-df_row = pd.read_csv (current_file, sep='\t',header=None, low_memory=False)
-df_row = df_row.replace(np.nan, 'Unknown')
+cols_to_use = [0,1,3,4]
+df_row = pd.read_csv (current_file, sep='\t',usecols= cols_to_use, encoding='UTF-8', header=None, low_memory=False)
+#print(df_row.info())
+df_row = df_row.replace(np.nan, 0)
 
 total_rows = row_sheet -1
 print(total_rows)

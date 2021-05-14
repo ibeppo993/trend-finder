@@ -12,7 +12,7 @@ max_num_processi = 1
 pausa_1 = 1
 pausa_2 = 1
 pausa_3 = 1
-file_da_eseguire = 'scrape_serp_selenium.py'
+file_da_eseguire = '08_google_trends.py'
 
 a = 1
 i = 0

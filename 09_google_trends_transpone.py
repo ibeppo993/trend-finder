@@ -36,7 +36,6 @@ for trend_file in file_list:
 files = glob.glob('output_data/09_gtrends_transpone*.csv')
 dfs = [pd.read_csv(f, header=None, sep="\t") for f in files]
 trans_df = pd.concat(dfs,ignore_index=True)
-
 date_filter = 'date'
 print(trans_df.info())
 print(trans_df)
@@ -45,7 +44,19 @@ print(trans_df.at[0,0])
 trans_df.at[0,0] = 'Week'
 print(trans_df.at[0,0])
 
+
 trans_df = trans_df[trans_df[0] != date_filter]
+trans_df = trans_df.drop_duplicates()
+
+min = 1
+max = 104
+list_week = []
+for c_week in range(min,max):
+    list_week.append(c_week)
+print(list_week)
+
+trans_df.drop(trans_df.columns[list_week], axis = 1, inplace = True)
+print(trans_df.info())
 trans_df.to_csv('output_data/09_zz_finish.csv', sep='\t', index=False, header=False)
 
 files_to_remove = glob.glob('output_data/09_gtrends_transpone*.csv')

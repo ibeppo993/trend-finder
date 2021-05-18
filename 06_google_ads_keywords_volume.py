@@ -242,5 +242,5 @@ if __name__ == '__main__':
                 c.execute("Update KEYWORDS_LIST set CHECKING = 0 where KEYWORDS = ?",(kw,))
                 conn.commit()
 
-            print('pausa 35 secondi')
-            time.sleep(35)
+            print('pausa 10 secondi')
+            time.sleep(15)

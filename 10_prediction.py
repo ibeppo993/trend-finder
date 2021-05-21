@@ -7,8 +7,8 @@ from matplotlib.dates import MonthLocator, num2date
 from matplotlib.ticker import FuncFormatter
 import os
 
-if os.path.isfile('filename.txt'):
-    os.remove('10_trend_forecast.csv')
+if os.path.isfile('output_data/10_trend_forecast.csv'):
+    os.remove('output_data/10_trend_forecast.csv')
 else:
     print ("File not exist")
 
@@ -18,7 +18,7 @@ df = pd.read_csv('output_data/09_zz_finish.csv', sep='\t')
 
 
 #creazione lista kw da dataframe
-kw_list = df['Week'].tolist()
+kw_list = df['date'].tolist()
 #print(kw_list)
 
 df.drop(df.columns[df.columns.str.contains('unnamed',case = False)],axis = 1, inplace = True)

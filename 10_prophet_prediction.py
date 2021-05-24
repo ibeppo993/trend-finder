@@ -38,7 +38,7 @@ while True:
     select_keyword()
     print(f'keyword ------- {keyword}')
     df = pd.read_csv('output_data/09_zz_finish.csv', sep='\t')
-    df_filtered = df.loc[df['date'] == f'{keyword}']
+    df_filtered = df.loc[df['Week'] == f'{keyword}']
     df_filtered = df_filtered.T
     df_filtered = df_filtered.reset_index()
 

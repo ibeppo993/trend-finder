@@ -6,12 +6,12 @@ from os import path
 from dotenv import load_dotenv
 load_dotenv()
 
-def create_db_ads():
+def create_db_prophet():
     output_html = os.environ.get("output_ads")
     teporary_file = os.environ.get("teporary_file")
     input_data = os.environ.get("input_data")
-    file_kw = input_data+os.environ.get("kw_file")
-
+    file_kw = os.environ.get("csv_kw_file")
+    print(file_kw)
 
     #creazione Cartelle
     config_file = 'config_file'
@@ -27,19 +27,28 @@ def create_db_ads():
     #
     # File
     #file_kw = input_data+'/keywords.txt'
-    db_name_keyword = os.environ.get("db_name_keyword_ads")
+    db_name_keyword = os.environ.get("db_name_keyword_prophet")
+    #print(db_name_keyword)
 
 
     #
     #
     # Creazione dataframe keyword
-    dataframe = pd.read_csv(file_kw, encoding='utf-8', sep=';', header=None)
+    dataframe = pd.read_csv(file_kw, encoding='utf-8', sep='\t', header=None)
+    dataframe = dataframe.iloc[:, 0]
+    dataframe = dataframe.to_frame().reset_index(drop=True)
+    dataframe = dataframe.iloc[1:]
+    #print(type(dataframe))
+    #print(dataframe)
+    #print(dataframe.info())
+
     dataframe['CHECKING'] = 0
     dataframe['SUM'] = 0
     dataframe.columns = ['KEYWORDS','CHECKING','SUM']
-    print(dataframe)
+    #dataframe = dataframe.iloc[1:]
+    #print(dataframe)
 
-
+    
     #
     #
     # Creazione DB da Dataframe KEYWORD
@@ -64,4 +73,4 @@ def create_db_ads():
         print('DB già presente KEYWORDS')
 
 
-create_db_ads()
+#create_db_prophet()

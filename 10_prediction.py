@@ -34,61 +34,61 @@ def select_keyword():
     conn.close()
     # print(new_keyword)
 
+while True:
+    select_keyword()
+    print(f'keyword ------- {keyword}')
+    df = pd.read_csv('output_data/09_zz_finish.csv', sep='\t')
+    df_filtered = df.loc[df['date'] == f'{keyword}']
+    df_filtered = df_filtered.T
+    df_filtered = df_filtered.reset_index()
 
-select_keyword()
-print(f'keyword ------- {keyword}')
-df = pd.read_csv('output_data/09_zz_finish.csv', sep='\t')
-df_filtered = df.loc[df['date'] == f'{keyword}']
-df_filtered = df_filtered.T
-df_filtered = df_filtered.reset_index()
+    new_header = df_filtered.iloc[0]
+    df_filtered = df_filtered[1:]
+    df_filtered.columns = new_header
 
-new_header = df_filtered.iloc[0]
-df_filtered = df_filtered[1:]
-df_filtered.columns = new_header
+    df_filtered.columns = ['ds', 'y']
+    print(type(df_filtered))
+    print(df_filtered.info())
+    print(df_filtered)
 
-df_filtered.columns = ['ds', 'y']
-print(type(df_filtered))
-print(df_filtered.info())
-print(df_filtered)
+    m = Prophet(weekly_seasonality=True)
+    m.fit(df_filtered)
 
-m = Prophet(weekly_seasonality=True)
-m.fit(df_filtered)
+    future = m.make_future_dataframe(periods=8, freq='W')
+    future.tail()
+    forecast = m.predict(future)
+    forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].tail()
+    #pd.set_option("display.max_rows", None, "display.max_columns", None)
+    #print(forecast)
+    #print(type(forecast))
 
-future = m.make_future_dataframe(periods=8, freq='W')
-future.tail()
-forecast = m.predict(future)
-forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].tail()
-#pd.set_option("display.max_rows", None, "display.max_columns", None)
-#print(forecast)
-#print(type(forecast))
+    df_toprint = forecast[['ds', 'yhat']]
+    #print(df_toprint)
 
-df_toprint = forecast[['ds', 'yhat']]
-#print(df_toprint)
+    fig1 = m.plot(forecast)
+    #plt.show()
 
-fig1 = m.plot(forecast)
-#plt.show()
+    timestr = time.strftime('%Y%m%d-%H')
+    if os.path.isfile(f'output_data/10_trend_forecast_{timestr}.csv'):
+        #print('##########################################################file exist1')
+        df_toprint.columns = ['week', f'{keyword}']
+        #df_toprint.set_index('week')
+        #print(df_toprint.info())
 
-timestr = time.strftime('%Y%m%d-%H')
-if os.path.isfile(f'output_data/10_trend_forecast_{timestr}.csv'):
-    #print('##########################################################file exist1')
-    df_toprint.columns = ['week', f'{keyword}']
-    #df_toprint.set_index('week')
-    #print(df_toprint.info())
+        #print('##########################################################file exist2')
+        df_to_concat = pd.read_csv(f'output_data/10_trend_forecast_{timestr}.csv', sep='\t', decimal=",")#, index_col='week')
+        #df_to_concat.set_index('week')
+        df_to_concat['week'] = pd.to_datetime(df_to_concat['week'])
+        #print(df_to_concat.info())
+        #print(df_to_concat)
 
-    #print('##########################################################file exist2')
-    df_to_concat = pd.read_csv(f'output_data/10_trend_forecast_{timestr}.csv', sep='\t', decimal=",")#, index_col='week')
-    #df_to_concat.set_index('week')
-    df_to_concat['week'] = pd.to_datetime(df_to_concat['week'])
-    #print(df_to_concat.info())
-    #print(df_to_concat)
+        #result = pd.concat([df_to_concat, df_toprint], axis=1, )
+        result = pd.DataFrame.merge(df_toprint,df_to_concat,on='week')
+        #print(result)
+        result.to_csv(f'output_data/10_trend_forecast_{timestr}.csv', sep='\t', index=False, decimal=",")
 
-    #result = pd.concat([df_to_concat, df_toprint], axis=1, )
-    result = pd.DataFrame.merge(df_toprint,df_to_concat,on='week')
-    #print(result)
-    result.to_csv(f'output_data/10_trend_forecast_{timestr}.csv', sep='\t', index=False, decimal=",")
-
-else:
-    #print ("File not exist")
-    df_toprint.columns = ['week', f'{keyword}']
-    df_toprint.set_index('week')
-    df_toprint.to_csv(f'output_data/10_trend_forecast_{timestr}.csv', sep='\t', index=False, decimal=",")
+    else:
+        #print ("File not exist")
+        df_toprint.columns = ['week', f'{keyword}']
+        df_toprint.set_index('week')
+        df_toprint.to_csv(f'output_data/10_trend_forecast_{timestr}.csv', sep='\t', index=False, decimal=",")

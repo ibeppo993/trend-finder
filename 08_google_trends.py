@@ -1,5 +1,6 @@
-import pytrends, io, sqlite3, urllib, time, datetime, csv, os, random
+import pytrends, io, sqlite3, urllib, time, datetime, csv, os, random, sys
 from pytrends.request import TrendReq
+from datetime import timedelta
 import pandas as pd
 from datetime import date
 from datetime import datetime
@@ -80,7 +81,23 @@ while True:
 	print(kw_list)
 	# print(keyword)
 	# pytrend = TrendReq(hl='it-IT', tz=360)
-	pytrend =TrendReq(hl='it-IT', tz=360, timeout=(10,25), proxies=proxies, retries=10, backoff_factor=0.1)#, requests_args={'verify':False})
+	try:
+		pytrend =TrendReq(hl='it-IT', tz=360, timeout=(10,25), proxies=proxies, retries=10, backoff_factor=0.1)#, requests_args={'verify':False})
+	except:
+		conn = sqlite3.connect(db_name_keyword)
+		c = conn.cursor()
+		c.execute("Update KEYWORDS_LIST set CHECKING = 0 where KEYWORDS = ?",(keyword,))
+		conn.commit()
+		conn = sqlite3.connect(db_name_proxy)
+		c = conn.cursor()
+		print('---------------------Proxy da posticipare '+proxy)
+		postpone_time = str(datetime.now() + timedelta(hours=2))
+		timestr_postpone = datetime.fromisoformat(postpone_time).timestamp()
+		c.execute("Update PROXY_LIST set TIME = ? where PROXY = ?",(timestr_postpone,proxy))
+		conn.commit()
+		conn.close()
+		sys.exit()
+
 	pytrend.build_payload(kw_list, cat=0, timeframe='today 5-y', geo='IT', gprop='')
 	data = pytrend.interest_over_time()
 	# print(data)

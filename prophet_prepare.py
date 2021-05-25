@@ -35,6 +35,7 @@ def create_db_prophet():
     #
     # Creazione dataframe keyword
     dataframe = pd.read_csv(file_kw, encoding='utf-8', sep='\t', header=None, low_memory=False)
+    print(dataframe)
     dataframe = dataframe.iloc[:, 0]
     dataframe = dataframe.to_frame().reset_index(drop=True)
     dataframe = dataframe.iloc[1:]

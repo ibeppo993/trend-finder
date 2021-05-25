@@ -27,12 +27,12 @@ print(file_list)
 
 i = 0
 for trend_file in file_list:
-    #print(trend_file)
+    print(trend_file)
     #print(f'{trend_file}')
     #print(f'{trend_file}_transpone')
-    df_toprint2 = pd.read_csv(f'{trend_file}', sep='\t')
+    #df_toprint2 = pd.read_csv(f'{trend_file}', sep='\t')
     #print(df_toprint2)
-    #print('---------------------------------------------------------')
+    print('---------------------------------------------------------')
     pd.read_csv(f'{trend_file}', header=None, sep='\t', low_memory=False).T.to_csv(f'{output_files}/09_gtrends_transpone_{i}.csv', header=False, index=False, sep='\t')
     i += 1
 

@@ -36,7 +36,7 @@ def select_keyword():
 
 df = pd.read_csv('output_data/09_zz_finish.csv', sep='\t')
 while True:
-    timestr = time.strftime('%Y%m%d-%H%M')
+    timestr = time.strftime('%Y%m%d-%H')
     select_keyword()
     print(f'keyword ------- {keyword}')
     

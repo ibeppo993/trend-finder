@@ -9,7 +9,7 @@ load_dotenv()
 json_authentication_file = os.environ.get("json_authentication_file")
 python_customer_metrics_1 = os.environ.get("python_customer_metrics_1")
 path = 'output_data/'
-current_file = f'{path}10_2_trend_forecast.csv'
+current_file = f'{path}11_zz_finish.csv'
 
 
 #

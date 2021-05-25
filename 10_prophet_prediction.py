@@ -1,94 +1,79 @@
-# https://facebook.github.io/prophet/docs/quick_start.html
+import glob, os, time
 import pandas as pd
-from prophet import Prophet
-
-from matplotlib import pyplot as plt
-from matplotlib.dates import MonthLocator, num2date
-from matplotlib.ticker import FuncFormatter
-import os, time, sqlite3
-from prophet_prepare import create_db_prophet
-
+from os import listdir
 from dotenv import load_dotenv
+from os import listdir
+
 load_dotenv()
 
-create_db_prophet()
+output_files = os.environ.get("output_files_trend")
+file_name = os.environ.get("file_name_trend")
+file_name_transpone = os.environ.get("file_name_transpone_trend")
+timestr = time.strftime('%Y%m%d-%H%M%S')
+timestr = time.strftime('%Y%m%d-%H%M%S')
+file_trends = f'{output_files}/{file_name}'
+file_trends_t = f'{output_files}/{file_name_transpone}'
 
-db_name_keyword = os.environ.get("db_name_keyword_prophet")
 
-# if os.path.isfile('output_data/10_trend_forecast.csv'):
-#     os.remove('output_data/10_trend_forecast.csv')
-# else:
-#     print ("File not exist")
+#os.chdir(os.environ.get("output_files_trend"))
+file_list = []
+for file in glob.glob(f'{output_files}/08_google*.csv'):
+    #print(file)
+    #print('-----')
+    file_list.append(file)
+#print('-----------print list')
+print(file_list)
 
-def select_keyword():
-    print('-------------------------')
-    conn = sqlite3.connect(db_name_keyword)
-    c = conn.cursor()
-    data = pd.read_sql_query(
-        "SELECT KEYWORDS FROM KEYWORDS_LIST WHERE SUM <> 2 AND CHECKING = 0 LIMIT 1;", conn)
-    # print(type(data['KEYWORDS'].iat[0]))
-    global keyword
-    keyword = (data['KEYWORDS'].iat[0])
-    c.execute("Update KEYWORDS_LIST set CHECKING = 1 where KEYWORDS = ?", (keyword,))
-    conn.commit()
-    conn.close()
-    # print(new_keyword)
 
-while True:
-    select_keyword()
-    print(f'keyword ------- {keyword}')
-    df = pd.read_csv('output_data/09_zz_finish.csv', sep='\t')
-    df_filtered = df.loc[df['Week'] == f'{keyword}']
-    df_filtered = df_filtered.T
-    df_filtered = df_filtered.reset_index()
+i = 0
+for trend_file in file_list:
+    print(trend_file)
+    #print(f'{trend_file}')
+    #print(f'{trend_file}_transpone')
+    #df_toprint2 = pd.read_csv(f'{trend_file}', sep='\t')
+    #print(df_toprint2)
+    print('---------------------------------------------------------')
+    pd.read_csv(f'{trend_file}', header=None, sep='\t', low_memory=False).T.to_csv(f'{output_files}/09_gtrends_transpone_{i}.csv', header=False, index=False, sep='\t')
+    i += 1
 
-    new_header = df_filtered.iloc[0]
-    df_filtered = df_filtered[1:]
-    df_filtered.columns = new_header
 
-    df_filtered.columns = ['ds', 'y']
-    print(type(df_filtered))
-    print(df_filtered.info())
-    print(df_filtered)
+files = glob.glob('output_data/09_gtrends_transpone*.csv')
+#print(files)
+dfs = [pd.read_csv(f, header=None, sep="\t") for f in files]
 
-    m = Prophet(weekly_seasonality=True)
-    m.fit(df_filtered)
+trans_df = pd.concat(dfs,ignore_index=True)
+date_filter = 'date'
+print(trans_df.info())
+print(trans_df)
 
-    future = m.make_future_dataframe(periods=8, freq='W')
-    future.tail()
-    forecast = m.predict(future)
-    forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].tail()
-    #pd.set_option("display.max_rows", None, "display.max_columns", None)
-    #print(forecast)
-    #print(type(forecast))
+#print(trans_df.at[0,0])
+trans_df.at[0,0] = 'Week'
+#print(trans_df.at[0,0])
 
-    df_toprint = forecast[['ds', 'yhat']]
-    #print(df_toprint)
 
-    fig1 = m.plot(forecast)
-    #plt.show()
+trans_df = trans_df[trans_df[0] != date_filter]
+new_header = trans_df.iloc[0] #grab the first row for the header
+trans_df = trans_df[1:] #take the data less the header row
+trans_df.columns = new_header #set the header row as the df header
 
-    timestr = time.strftime('%Y%m%d-%H')
-    if os.path.isfile(f'output_data/10_trend_forecast_{timestr}.csv'):
-        #print('##########################################################file exist1')
-        df_toprint.columns = ['week', f'{keyword}']
-        #df_toprint.set_index('week')
-        #print(df_toprint.info())
 
-        #print('##########################################################file exist2')
-        df_to_concat = pd.read_csv(f'output_data/10_trend_forecast_{timestr}.csv', sep='\t', decimal=",")#, index_col='week')
-        #df_to_concat.set_index('week')
-        df_to_concat['week'] = pd.to_datetime(df_to_concat['week'])
-        #print(df_to_concat.info())
-        #print(df_to_concat)
+trans_df = trans_df.drop_duplicates(subset='Week', keep="first").dropna(axis='columns')
+print(trans_df)
 
-        #result = pd.concat([df_to_concat, df_toprint], axis=1, )
-        result = pd.DataFrame.merge(df_toprint,df_to_concat,on='week')
-        #print(result)
-        result.to_csv(f'output_data/10_trend_forecast_{timestr}.csv', sep='\t', index=False, decimal=",")
+#min = 1
+#max = 104
+#list_week = []
+#for c_week in range(min,max):
+#    list_week.append(c_week)
+#print(list_week)
+#trans_df.drop(trans_df.columns[list_week], axis = 1, inplace = True)
+#print(trans_df.info())
 
-    else:
-        #print ("File not exist")
-        df_toprint.columns = ['week', f'{keyword}']
-        df_toprint.set_index('week')
-        df_toprint.to_csv(f'output_data/10_trend_forecast_{timestr}.csv', sep='\t', index=False, decimal=",")
+#trans_df.to_csv('output_data/09_zz_finish.csv', sep='\t', index=False, header=False)
+trans_df.to_csv('output_data/09_zz_finish.csv', sep='\t', index=False)
+
+
+files_to_remove = glob.glob('output_data/09_gtrends_transpone*.csv')
+#print(files_to_remove)
+for file_r in files_to_remove:
+    os.remove(file_r)

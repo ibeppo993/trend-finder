@@ -11,7 +11,7 @@ def create_db_prophet():
     teporary_file = os.environ.get("teporary_file")
     input_data = os.environ.get("input_data")
     file_kw = os.environ.get("csv_kw_file")
-    print(file_kw)
+    #print(file_kw)
 
     #creazione Cartelle
     config_file = 'config_file'
@@ -34,7 +34,7 @@ def create_db_prophet():
     #
     #
     # Creazione dataframe keyword
-    dataframe = pd.read_csv(file_kw, encoding='utf-8', sep='\t', header=None)
+    dataframe = pd.read_csv(file_kw, encoding='utf-8', sep='\t', header=None, low_memory=False)
     dataframe = dataframe.iloc[:, 0]
     dataframe = dataframe.to_frame().reset_index(drop=True)
     dataframe = dataframe.iloc[1:]

@@ -1,4 +1,5 @@
 #https://github.com/nithinmurali/pygsheets
+import collections
 import pygsheets, os, gspread
 import numpy as np
 import pandas as pd
@@ -30,12 +31,16 @@ df_row2 = df_row.append(df_row.sum(numeric_only=True), ignore_index=True)
 
 df_row2 = df_row2.tail(1)
 df_row2['Week'].fillna('Generale', inplace=True)
+#print(df_row2)
+#print(type(df_row2))
+#print(df_row2.info())
 
-print(df_row2)
+
+
 numbers_of_rows = len(df_row2)
 #print(numbers_of_rows)
 row_sheet = numbers_of_rows +1
-print(row_sheet)
+#print(row_sheet)
 #conteggio colonne df
 numbers_of_columns = len(df_row2.columns)
 column_sheet = numbers_of_columns
@@ -55,12 +60,12 @@ wks.cols=cols #colonna O
 wks.clear()
 
 total_rows = row_sheet -1
-print(total_rows)
+#print(total_rows)
 total_rows = total_rows // 2500
-print(total_rows)
+#print(total_rows)
 
 cell_list = wks.range('A:A')
-
+#print(cell_list)
 i = 1
 for cell in cell_list:
     #print(cell)
@@ -75,55 +80,14 @@ for cell in cell_list:
 wks.insert_rows(row=i, number=1)
 
 
+print(type(df_row2))
+df_row2 = df_row2.astype(str)
 
-df_row2.columns = df_row2.iloc[0]
-little_dataframe = df_row2[1:]
-#print(little_dataframe)
+#df_row2 = df_row2.str[:-1]
+df_row2 = df_row2.replace('\.0$',',0', regex=True)
 
-#little_dataframe = numpy.delete(little_dataframe, index)
-print(i)
-wks.set_dataframe(little_dataframe,(i, 1))
+print(df_row2)
 
-
-
-
-'''
-total_rows = row_sheet -1
-print(total_rows)
-total_rows = total_rows // 2500
-print(total_rows)
-
-splitted_dataframe = np.array_split(df_row, total_rows)
-#print(splitted_dataframe)
-#print(type(splitted_dataframe))
-# for little_dataframe in splitted_dataframe:
-#     numbers_of_rows_ld = len(little_dataframe)
-#     print(numbers_of_rows_ld)
-
-for little_dataframe in splitted_dataframe:
-    cell_list = wks.range('A:A')
-
-    i = 1
-    for cell in cell_list:
-        #print(cell)
-        #print(len(cell_list))
-        cell_str = str(cell)
-        #print(type(cell))
-        in_list = "''" in cell_str
-        #print(in_list)
-        if in_list == False:
-            i += 1
-
-    wks.insert_rows(row=i, number=1)
-
-    little_dataframe.columns = little_dataframe.iloc[0]
-    little_dataframe = little_dataframe[1:]
-    #print(little_dataframe)
-
-    #little_dataframe = numpy.delete(little_dataframe, index)
-    print(i)
-    wks.set_dataframe(little_dataframe,(i, 1))
-'''
-
-
+#print(i)
+wks.set_dataframe(df_row2,(i, 1))
 

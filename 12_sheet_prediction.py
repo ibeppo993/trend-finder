@@ -18,10 +18,22 @@ current_file = f'{path}11_zz_finish.csv'
 #
 #
 #creazione dataframe
-#cols_to_use = [0,1,3,4]
-#df = pd.read_csv(current_file,usecols=cols_to_use, sep='\t', encoding='UTF-8', decimal=",")
-df = pd.read_csv(current_file, sep='\t', encoding='UTF-8', decimal=",")
+df = pd.read_csv(current_file, sep='\t', encoding='UTF-8')
 #print(df.info())
+print(df)
+
+min = 1
+max = 260
+
+list_week = []
+for c_week in range(min,max):
+    list_week.append(c_week)
+#print(list_week)
+df.drop(df.columns[list_week], axis = 1, inplace = True)
+#print(df.info())
+print(df)
+
+
 #conteggio righe df
 numbers_of_rows = len(df)
 #print(numbers_of_rows)
@@ -36,7 +48,8 @@ column_sheet = numbers_of_columns
 gc = pygsheets.authorize(service_file=json_authentication_file)
 # Open spreadsheet and then worksheet
 sh = gc.open_by_key(python_customer_metrics_1)
-wks = sh.worksheet_by_title('row_trends_data')
+wks = sh.worksheet_by_title('row_predict_data')
+
 
 #Creazione riche da csv ecommerce
 rows = row_sheet
@@ -46,11 +59,17 @@ wks.cols=cols #colonna O
 wks.clear()
 
 #scrittura con rige dataframe
-#df_row = pd.read_csv (current_file, sep='\t',usecols=cols_to_use, encoding='UTF-8', header=None, low_memory=False)
-df_row = pd.read_csv (current_file, sep='\t', encoding='UTF-8', header=None, low_memory=False)
+df_row = pd.read_csv (current_file, sep='\t',header=None, low_memory=False, encoding='UTF-8')
+df_row = df_row.replace(np.nan, 'Unknown')
 
-#print(df_row.info())
-df_row = df_row.replace(np.nan, 0)
+
+list_week = []
+for c_week in range(min,max):
+    list_week.append(c_week)
+#print(list_week)
+df_row.drop(df_row.columns[list_week], axis = 1, inplace = True)
+#print(df.info())
+print(df_row)
 
 total_rows = row_sheet -1
 print(total_rows)
@@ -58,13 +77,15 @@ total_rows = total_rows // 2500
 print(total_rows)
 
 splitted_dataframe = np.array_split(df_row, total_rows)
-#print(splitted_dataframe)
+print(splitted_dataframe)
 #print(type(splitted_dataframe))
-# for little_dataframe in splitted_dataframe:
-#     numbers_of_rows_ld = len(little_dataframe)
-#     print(numbers_of_rows_ld)
+#for little_dataframe in splitted_dataframe:
+#    numbers_of_rows_ld = len(little_dataframe)
+#    print(numbers_of_rows_ld)
+
 
 for little_dataframe in splitted_dataframe:
+    #print(little_dataframe)
     cell_list = wks.range('A:A')
 
     i = 1
@@ -78,12 +99,20 @@ for little_dataframe in splitted_dataframe:
         if in_list == False:
             i += 1
 
+    little_dataframe = little_dataframe.astype(str)
+
+    #df_row2 = df_row2.str[:-1]
+    little_dataframe = little_dataframe.replace('\.0$',',0', regex=True)
+
     wks.insert_rows(row=i, number=1)
 
     little_dataframe.columns = little_dataframe.iloc[0]
     little_dataframe = little_dataframe[1:]
-    #print(little_dataframe)
+    print(little_dataframe)
 
     #little_dataframe = numpy.delete(little_dataframe, index)
     print(i)
     wks.set_dataframe(little_dataframe,(i, 1))
+
+
+

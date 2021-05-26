@@ -48,7 +48,7 @@ column_sheet = numbers_of_columns
 gc = pygsheets.authorize(service_file=json_authentication_file)
 # Open spreadsheet and then worksheet
 sh = gc.open_by_key(python_customer_metrics_1)
-wks = sh.worksheet_by_title('row_trends_data')
+wks = sh.worksheet_by_title('row_trends_detail')
 
 
 #Creazione riche da csv ecommerce

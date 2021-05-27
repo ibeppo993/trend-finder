@@ -58,18 +58,12 @@ def file_9():
     cmd.communicate()
 
 def file_10():
-    file = '12_sheet_prediction.py'
-    print(f'{file}')
-    cmd = subprocess.Popen(['python3',f"{file}"])
-    cmd.communicate()
-
-def file_11():
     file = '12_sheet_search_console.py'
     print(f'{file}')
     cmd = subprocess.Popen(['python3',f"{file}"])
     cmd.communicate()
 
-def file_12():
+def file_11():
     file = '12_sheet_trends_detail.py'
     print(f'{file}')
     cmd = subprocess.Popen(['python3',f"{file}"])
@@ -81,6 +75,23 @@ def file_12():
     cmd = subprocess.Popen(['python3',f"{file}"])
     cmd.communicate()
 
+def file_13():
+    file = '12_sheet_prediction_detail.py'
+    print(f'{file}')
+    cmd = subprocess.Popen(['python3',f"{file}"])
+    cmd.communicate()
+
+def file_14():
+    file = '12_sheet_prediction_general.py'
+    print(f'{file}')
+    cmd = subprocess.Popen(['python3',f"{file}"])
+    cmd.communicate()
+    
+def file_15():
+    file = '13_clean_folder.py'
+    print(f'{file}')
+    cmd = subprocess.Popen(['python3',f"{file}"])
+    cmd.communicate()
 
 file_1()
 file_2()
@@ -94,4 +105,7 @@ file_9()
 file_10()
 file_11()
 file_12()
+file_13()
+file_14()
+file_15()
 

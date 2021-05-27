@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 from matplotlib.dates import MonthLocator, num2date
 from matplotlib.ticker import FuncFormatter
 import os, time, sqlite3
-from prophet_prepare import create_db_prophet
+from z_prophet_prepare import create_db_prophet
 
 from dotenv import load_dotenv
 load_dotenv()

@@ -73,7 +73,7 @@ print(df_row)
 
 total_rows = row_sheet -1
 print(total_rows)
-total_rows = total_rows // 2500
+total_rows = total_rows // 10
 print(total_rows)
 
 splitted_dataframe = np.array_split(df_row, total_rows)

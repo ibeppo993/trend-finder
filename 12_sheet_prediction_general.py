@@ -10,7 +10,7 @@ load_dotenv()
 json_authentication_file = os.environ.get("json_authentication_file")
 python_customer_metrics_1 = os.environ.get("python_customer_metrics_1")
 path = 'output_data/'
-current_file = f'{path}09_zz_finish.csv'
+current_file = f'{path}11_zz_finish.csv'
 
 
 #
@@ -19,12 +19,14 @@ current_file = f'{path}09_zz_finish.csv'
 #
 #
 #creazione dataframe
-df = pd.read_csv(current_file, sep='\t', encoding='UTF-8')
+df = pd.read_csv(current_file, sep='\t', encoding='UTF-8', decimal=',')
+print(df)
 #conteggio righe df
 
 #scrittura con rige dataframe
 #df_row = pd.read_csv (current_file, sep='\t',header=None, low_memory=False)
-df_row = pd.read_csv (current_file, sep='\t', low_memory=False)
+df_row = pd.read_csv (current_file, sep='\t', low_memory=False, decimal=',')
+print(df_row)
 df_row = df_row.replace(np.nan, 'Unknown')
 
 df_row2 = df_row.append(df_row.sum(numeric_only=True), ignore_index=True)
@@ -50,7 +52,7 @@ column_sheet = numbers_of_columns
 gc = pygsheets.authorize(service_file=json_authentication_file)
 # Open spreadsheet and then worksheet
 sh = gc.open_by_key(python_customer_metrics_1)
-wks = sh.worksheet_by_title('row_trend_general')
+wks = sh.worksheet_by_title('row_predict_general')
 
 #Creazione riche da csv ecommerce
 rows = row_sheet
@@ -84,7 +86,7 @@ print(type(df_row2))
 df_row2 = df_row2.astype(str)
 
 #df_row2 = df_row2.str[:-1]
-df_row2 = df_row2.replace('\.0$',',0', regex=True)
+df_row2 = df_row2.replace('\.',',', regex=True)
 
 print(df_row2)
 

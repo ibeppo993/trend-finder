@@ -6,11 +6,11 @@ import _locale, sqlite3, googleads, traceback, time, os
 import pandas as pd
 from googleads import adwords
 from googleads import oauth2
-from ads_prepare import create_db_ads
+from z_ads_prepare import create_db_ads
 from dotenv import load_dotenv
 load_dotenv()
 
-n_keywords = 100
+n_keywords = 12
 
 create_db_ads()
 

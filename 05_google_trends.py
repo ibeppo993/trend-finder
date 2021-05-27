@@ -5,7 +5,7 @@ import pandas as pd
 from datetime import date
 from datetime import datetime
 from pytrends import *
-from trends_prepare import create_db_and_folder
+from z_trends_prepare import create_db_and_folder
 from dotenv import load_dotenv
 load_dotenv()
 

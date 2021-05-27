@@ -1,11 +1,17 @@
 import pandas as pd
 import os, time, subprocess
+from dotenv import load_dotenv
+load_dotenv()
 
 
 print('secondo')
 
-root = 'output_data/'
-root_kw = 'input_data/'
+root = os.environ.get("root_output")
+root_kw = os.environ.get("root_input")
+file_kw = os.environ.get("file_kw")
+gsc_file_1 = os.environ.get("gsc_file_1")
+gsc_file_2 = os.environ.get("gsc_file_2")
+
 
 if not os.path.exists(root_kw):
     os.makedirs(root_kw)
@@ -25,7 +31,7 @@ os.system('python third.py')
 '''
 #brand = 'vanoli'
 
-df2 = pd.read_csv(root +'01_google_search_console.csv', usecols = ['query','impressions','clicks','page','date','country','avg_position'],sep = ';')
+df2 = pd.read_csv(root + gsc_file_1, usecols = ['query','impressions','clicks','page','date','country','avg_position'],sep = ';')
 df2['sumimppression'] = df2.groupby(['query','page'])['impressions'].transform('sum')
 del df2['impressions']
 df2['sumclicks'] = df2.groupby(['query','page'])['clicks'].transform('sum')
@@ -54,11 +60,11 @@ df3 = df2[df2.sumimppression > 22]
 
 
 
-df3.to_csv(root+'02_google_search_console.csv', index=False, sep = ';')
+df3.to_csv(root + gsc_file_2, index=False, sep = ';')
 print(df3.head())
 #selection = df3.loc['query']
 #print(selection)
 
 selection = df3['query']
 print(selection)
-selection.to_csv(root_kw+'keywords.txt', index=False,header=False)
+selection.to_csv(root_kw+file_kw, index=False,header=False)

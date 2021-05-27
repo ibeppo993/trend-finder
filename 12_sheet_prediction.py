@@ -23,7 +23,7 @@ df = pd.read_csv(current_file, sep='\t', encoding='UTF-8')
 print(df)
 
 min = 1
-max = 260
+max = 200
 
 list_week = []
 for c_week in range(min,max):
@@ -48,7 +48,7 @@ column_sheet = numbers_of_columns
 gc = pygsheets.authorize(service_file=json_authentication_file)
 # Open spreadsheet and then worksheet
 sh = gc.open_by_key(python_customer_metrics_1)
-wks = sh.worksheet_by_title('row_predict_data')
+wks = sh.worksheet_by_title('row_predict_detail')
 
 
 #Creazione riche da csv ecommerce

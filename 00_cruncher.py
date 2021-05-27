@@ -17,8 +17,14 @@ def file_2():
 
 def file_3():
     file = '05_google_trends.py'
+    time.sleep(5)
+    file1 = '05_google_trends_1.py'
+    time.sleep(5)
+    file2 = '05_google_trends_2.py'
     print(f'{file}')
     cmd = subprocess.Popen(['python3',f"{file}"])
+    cmd = subprocess.Popen(['python3',f"{file1}"])
+    cmd = subprocess.Popen(['python3',f"{file2}"])
     cmd.communicate()
 
 def file_4():

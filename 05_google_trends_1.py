@@ -58,13 +58,23 @@ def select_keyword():
     conn.close()
     # print(new_keyword)
 
+def check_record_db():
+    conn = sqlite3.connect(db_name_keyword)
+    c = conn.cursor()
+    data = pd.read_sql_query("SELECT KEYWORDS FROM KEYWORDS_LIST WHERE SUM <> 2 AND CHECKING = 0 ;", conn)
+    global numbers_kw
+    numbers_kw = len(data)
+    print(numbers_kw)
+    conn.commit()
+    conn.close()
 
 #
 #
 # Trend di ricerche nel tempo
 #
 #
-while True:
+check_record_db()
+while numbers_kw != 0:
 	select_keyword()
 	select_proxy()
 
@@ -105,6 +115,7 @@ while True:
 		# data.drop(labels=['isPartial'], axis='columns')
 		data = data.drop(labels=['isPartial'],axis='columns')
 		dataset.append(data)
+		check_record_db()
 
 	try:
 		result = pd.concat(dataset, axis=1)
@@ -112,6 +123,7 @@ while True:
 		# print(result)
 
 		timestr = time.strftime('%Y%m%d-%H')
+		check_record_db()
 		if os.path.isfile(f'output_data/08_google_trends_1_{timestr}.csv'):
 			df_file = pd.read_csv(f'output_data/08_google_trends_1_{timestr}.csv', sep='\t', index_col='date')
 			# print(df_file)
@@ -126,10 +138,12 @@ while True:
 			# print(new_result.info())
 			new_result.to_csv(f'output_data/08_google_trends_1_{timestr}.csv', sep='\t')
 			print('--------------DataFrame concatenato')
-
+			check_record_db()
 
 		else:
 			result.to_csv(f'output_data/08_google_trends_1_{timestr}.csv', sep='\t')
 			print('--------------DataFrame scritto')
+			check_record_db()
 	except:
 		print('--------------DataFrame VUOTO')
+		check_record_db()

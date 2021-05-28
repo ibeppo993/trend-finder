@@ -23,8 +23,11 @@ def file_3():
     file2 = '05_google_trends_2.py'
     print(f'{file}')
     cmd = subprocess.Popen(['python3',f"{file}"])
+    time.sleep(5)
     cmd = subprocess.Popen(['python3',f"{file1}"])
+    time.sleep(5)
     cmd = subprocess.Popen(['python3',f"{file2}"])
+    time.sleep(5)
     cmd.communicate()
 
 def file_4():

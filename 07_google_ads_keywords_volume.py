@@ -2,7 +2,7 @@
 #https://developers.google.com/adwords/api/docs/appendix/geotargeting
 #https://developers.google.com/adwords/api/docs/reference/v201809/TargetingIdeaService.TargetingIdeaSelector
 
-import _locale, sqlite3, googleads, traceback, time, os
+import _locale, sqlite3, googleads, traceback, time, os, sys
 import pandas as pd
 from googleads import adwords
 from googleads import oauth2
@@ -10,7 +10,7 @@ from z_ads_prepare import create_db_ads
 from dotenv import load_dotenv
 load_dotenv()
 
-n_keywords = 12
+n_keywords = 5
 
 create_db_ads()
 
@@ -32,7 +32,15 @@ def select_keyword():
     conn.close()
     print(keywords_list_db)
 
-
+def check_record_db():
+    conn = sqlite3.connect(db_name_keyword)
+    c = conn.cursor()
+    data = pd.read_sql_query("SELECT KEYWORDS FROM KEYWORDS_LIST WHERE SUM <> 2 AND CHECKING = 0 ;", conn)
+    global numbers_kw
+    numbers_kw = len(data)
+    print(numbers_kw)
+    conn.commit()
+    conn.close()
 
 #locations_id = '2156' #Cina CN
 locations_id = '2380' #Italia IT
@@ -216,8 +224,15 @@ if __name__ == '__main__':
     #print(timestr)
 
 
-    while True:
+    check_record_db()
+    while numbers_kw != 0:
         try:
+            check_record_db()
+            if numbers_kw < n_keywords:
+                n_keywords = 1
+            if numbers_kw == 0:
+                print()
+                sys.exit()
             select_keyword()
             volume_puller = searchVolumePuller(CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN, DEVELOPER_TOKEN, CLIENT_CUSTOMER_ID)
             adwords_client = volume_puller.get_client ( )
@@ -235,12 +250,16 @@ if __name__ == '__main__':
                 kw_sv_df.to_csv(my_file, mode='a', index=False, header=False, encoding='utf-8', sep='\t', decimal=',')
             print('pausa 10 secondi')
             time.sleep(10)
+            check_record_db()
         except:
             for kw in keywords_list_db:
                 conn = sqlite3.connect(db_name_keyword)
                 c = conn.cursor()
                 c.execute("Update KEYWORDS_LIST set CHECKING = 0 where KEYWORDS = ?",(kw,))
                 conn.commit()
-
-            print('pausa 10 secondi')
+                check_record_db()
+                
+            print('pausa 15 secondi')
             time.sleep(15)
+            check_record_db()
+

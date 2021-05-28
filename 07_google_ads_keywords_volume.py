@@ -10,7 +10,7 @@ from z_ads_prepare import create_db_ads
 from dotenv import load_dotenv
 load_dotenv()
 
-n_keywords = 5
+n_keywords = 100
 
 create_db_ads()
 

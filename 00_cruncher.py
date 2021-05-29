@@ -16,12 +16,12 @@ def file_2():
     cmd.communicate()
 
 def file_3():
-    file = '05_google_trends.py'
+    file = '04_trend_manager.py'
     time.sleep(5)
-    file1 = '05_google_trends_1.py'
+    file1 = '04_trend_manager_1.py'
     time.sleep(5)
-    file2 = '05_google_trends_2.py'
-    print(f'{file}')
+    file2 = '04_trend_manager_2.py'
+
     cmd = subprocess.Popen(['python3',f"{file}"])
     time.sleep(5)
     cmd = subprocess.Popen(['python3',f"{file1}"])

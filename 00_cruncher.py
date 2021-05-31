@@ -65,36 +65,42 @@ def file_9():
     print(f'{file}')
     cmd = subprocess.Popen(['python3',f"{file}"])
     cmd.communicate()
+    time.sleep(5)
 
 def file_10():
     file = '12_sheet_search_console.py'
     print(f'{file}')
     cmd = subprocess.Popen(['python3',f"{file}"])
     cmd.communicate()
+    time.sleep(5)
 
 def file_11():
     file = '12_sheet_trends_detail.py'
     print(f'{file}')
     cmd = subprocess.Popen(['python3',f"{file}"])
     cmd.communicate()
+    time.sleep(5)
 
 def file_12():
     file = '12_sheet_trends_general.py'
     print(f'{file}')
     cmd = subprocess.Popen(['python3',f"{file}"])
     cmd.communicate()
+    time.sleep(5)
 
 def file_13():
     file = '12_sheet_prediction_detail.py'
     print(f'{file}')
     cmd = subprocess.Popen(['python3',f"{file}"])
     cmd.communicate()
+    time.sleep(5)
 
 def file_14():
     file = '12_sheet_prediction_general.py'
     print(f'{file}')
     cmd = subprocess.Popen(['python3',f"{file}"])
     cmd.communicate()
+    time.sleep(5)
     
 def file_15():
     file = '13_clean_folder.py'
@@ -116,5 +122,5 @@ file_11()
 file_12()
 file_13()
 file_14()
-file_15()
+#file_15()
 

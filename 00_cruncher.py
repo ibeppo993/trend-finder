@@ -16,18 +16,21 @@ def file_2():
     cmd.communicate()
 
 def file_3():
-    file = '04_trend_manager.py'
-    time.sleep(5)
-    file1 = '04_trend_manager_1.py'
-    time.sleep(5)
-    file2 = '04_trend_manager_2.py'
+    # file = '04_trend_manager.py'
+    # time.sleep(5)
+    # file1 = '04_trend_manager_1.py'
+    # time.sleep(5)
+    # file2 = '04_trend_manager_2.py'
 
+    # cmd = subprocess.Popen(['python3',f"{file}"])
+    # time.sleep(5)
+    # cmd = subprocess.Popen(['python3',f"{file1}"])
+    # time.sleep(5)
+    # cmd = subprocess.Popen(['python3',f"{file2}"])
+    # time.sleep(5)
+    # cmd.communicate()
+    file = '03_trends_cruncher.py'
     cmd = subprocess.Popen(['python3',f"{file}"])
-    time.sleep(5)
-    cmd = subprocess.Popen(['python3',f"{file1}"])
-    time.sleep(5)
-    cmd = subprocess.Popen(['python3',f"{file2}"])
-    time.sleep(5)
     cmd.communicate()
 
 def file_4():

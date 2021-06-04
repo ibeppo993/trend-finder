@@ -55,7 +55,7 @@ df2.drop_duplicates(subset ="query", keep = 'first', inplace = True)
 print(df2)
 '''
 #Rimozione numero di impression basso
-df3 = df2[df2.sumimppression > 350]
+df3 = df2[df2.sumimppression > 80]
 #print(df3)
 
 

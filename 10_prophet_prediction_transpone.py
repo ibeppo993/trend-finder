@@ -70,6 +70,8 @@ print(trans_df)
 #print(trans_df.info())
 
 #trans_df.to_csv('output_data/09_zz_finish.csv', sep='\t', index=False, header=False)
+trans_df.drop(trans_df.loc[trans_df['Week']=='week'].index, inplace=True)
+
 trans_df.to_csv('output_data/11_zz_finish.csv', sep='\t', index=False)
 
 

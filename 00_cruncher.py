@@ -63,6 +63,13 @@ def file_8():
     cmd = subprocess.Popen(['python3',f"{file}"])
     cmd.communicate()
 
+def file_8_1():
+    file = '11_prophet_prediction_0_100.py'
+    print(f'{file}')
+    cmd = subprocess.Popen(['python3',f"{file}"])
+    cmd.communicate()
+
+
 def file_9():
     file = '12_sheet_ads.py'
     print(f'{file}')
@@ -119,6 +126,7 @@ file_5()
 file_6()
 file_7()
 file_8()
+file_8_1()
 file_9()
 file_10()
 file_11()

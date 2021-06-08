@@ -52,7 +52,7 @@ output_rows = []
 # 182 - 89
 # 88 - 1
 
-start_date = datetime.now() + timedelta(days=-3)
+start_date = datetime.now() + timedelta(days=-10)
 end_date = datetime.now() + timedelta(days=-3)
 
 #print(start_date)

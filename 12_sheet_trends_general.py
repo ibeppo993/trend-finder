@@ -61,7 +61,7 @@ wks.clear()
 
 total_rows = row_sheet -1
 #print(total_rows)
-total_rows = total_rows // 100
+total_rows = total_rows // 50
 #print(total_rows)
 
 cell_list = wks.range('A:A')

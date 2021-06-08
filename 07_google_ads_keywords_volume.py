@@ -10,7 +10,7 @@ from z_ads_prepare import create_db_ads
 from dotenv import load_dotenv
 load_dotenv()
 
-n_keywords = 100
+n_keywords = 20
 
 create_db_ads()
 
@@ -259,7 +259,7 @@ if __name__ == '__main__':
                 conn.commit()
                 check_record_db()
                 
-            print('pausa 15 secondi')
-            time.sleep(15)
+            print('pausa 35 secondi')
+            time.sleep(35)
             check_record_db()
 

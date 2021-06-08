@@ -51,7 +51,7 @@ df_row = df_row.replace(np.nan, 0)
 
 total_rows = row_sheet -1
 print(total_rows)
-total_rows = total_rows // 100
+total_rows = total_rows // 50
 print(total_rows)
 
 splitted_dataframe = np.array_split(df_row, total_rows)

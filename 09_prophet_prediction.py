@@ -58,7 +58,7 @@ while True:
     m = Prophet(weekly_seasonality=True)
     m.fit(df_filtered)
 
-    future = m.make_future_dataframe(periods=16, freq='W')
+    future = m.make_future_dataframe(periods=8, freq='W')
     future.tail()
     forecast = m.predict(future)
     forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].tail()

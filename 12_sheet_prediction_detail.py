@@ -9,7 +9,7 @@ load_dotenv()
 json_authentication_file = os.environ.get("json_authentication_file")
 python_customer_metrics_1 = os.environ.get("python_customer_metrics_1")
 path = 'output_data/'
-current_file = f'{path}11_zz_finish.csv'
+current_file = f'{path}11_zz_finish_0_100.csv'
 
 
 #
@@ -22,16 +22,16 @@ df = pd.read_csv(current_file, sep='\t', encoding='UTF-8')
 #print(df.info())
 print(df)
 
-min = 1
-max = 200
+# min = 1
+# max = 200
 
-list_week = []
-for c_week in range(min,max):
-    list_week.append(c_week)
-#print(list_week)
-df.drop(df.columns[list_week], axis = 1, inplace = True)
-#print(df.info())
-print(df)
+# list_week = []
+# for c_week in range(min,max):
+#     list_week.append(c_week)
+# #print(list_week)
+# df.drop(df.columns[list_week], axis = 1, inplace = True)
+# #print(df.info())
+# print(df)
 
 
 #conteggio righe df
@@ -63,17 +63,17 @@ df_row = pd.read_csv (current_file, sep='\t',header=None, low_memory=False, enco
 df_row = df_row.replace(np.nan, 'Unknown')
 
 
-list_week = []
-for c_week in range(min,max):
-    list_week.append(c_week)
-#print(list_week)
-df_row.drop(df_row.columns[list_week], axis = 1, inplace = True)
-#print(df.info())
-print(df_row)
+# list_week = []
+# for c_week in range(min,max):
+#     list_week.append(c_week)
+# #print(list_week)
+# df_row.drop(df_row.columns[list_week], axis = 1, inplace = True)
+# #print(df.info())
+# print(df_row)
 
 total_rows = row_sheet -1
 print(total_rows)
-total_rows = total_rows // 100
+total_rows = total_rows // 50
 print(total_rows)
 
 splitted_dataframe = np.array_split(df_row, total_rows)

@@ -10,7 +10,7 @@ load_dotenv()
 json_authentication_file = os.environ.get("json_authentication_file")
 python_customer_metrics_1 = os.environ.get("python_customer_metrics_1")
 path = 'output_data/'
-current_file = f'{path}11_zz_finish.csv'
+current_file = f'{path}11_zz_finish_0_100.csv'
 
 
 #
@@ -63,7 +63,7 @@ wks.clear()
 
 total_rows = row_sheet -1
 #print(total_rows)
-total_rows = total_rows // 100
+total_rows = total_rows // 50
 #print(total_rows)
 
 cell_list = wks.range('A:A')

@@ -10,11 +10,11 @@ load_dotenv()
 json_authentication_file = os.environ.get("json_authentication_file")
 python_customer_metrics_1 = os.environ.get("python_customer_metrics_1")
 path = 'output_data/'
-current_file = f'{path}12_zz_finish.csv'
+current_file = f'{path}11_zz_finish.csv'
 
 
 #creazione dataframe
-df = pd.read_csv(current_file, sep='\t', encoding='UTF-8')
+df = pd.read_csv(current_file, sep='\t', encoding='UTF-8', decimal=',')
 #print(df.info())
 #print(df)
 
@@ -47,7 +47,7 @@ for index in df_float.index:
         #print(type(predict_value))
         list_value.append(predict_value)
     name = list_value[0]
-    print(name)
+    #print(name)
     
     del list_value[0]
     #print(list_value)
@@ -94,19 +94,35 @@ for index in df_float.index:
     
 
     col_list = list(df_float)
+    #print(df_float)
 
 
-    dictionary_list = zip(col_list, new_list)
+    new_list2 = []
+
+    #print(new_list)
+    for item in new_list:
+        if item != name:
+            x = str(item)
+            x = x.replace(".", ",")
+            new_list2.append(str(x))
+        else:
+            x = str(item)
+            new_list2.append(str(x))
+
+
+    #print(new_list2)
+    dictionary_list = zip(col_list, new_list2)
     a_dictionary = dict(dictionary_list)
     #print(a_dictionary)
     df_to_append = pd.DataFrame([a_dictionary])
-    #print(df_to_append)
+
 
 
     #df_to_append = df_to_append.T
     #print(df_to_append)
     df_float = df_float.append(df_to_append)
+    #print(df_float)
 
 print(df_float)
-
+df_float.to_csv('output_data/11_zz_finish_0_100.csv', sep='\t', index=False, decimal=",")
 

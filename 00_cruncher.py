@@ -118,6 +118,8 @@ def file_15():
     cmd = subprocess.Popen(['python3',f"{file}"])
     cmd.communicate()
 
+
+file_15()
 file_1()
 file_2()
 file_3()

@@ -85,10 +85,12 @@ while numbers_kw != 0:
 	proxies = []
 	proxies.append(proxy)
 	print(proxies)
+	print(type(proxies))
 
 	kw_list = []
 	kw_list.append(keyword)
 	print(kw_list)
+	print(type(kw_list))
 	# print(keyword)
 	# pytrend = TrendReq(hl='it-IT', tz=360)
 	try:

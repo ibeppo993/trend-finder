@@ -73,7 +73,7 @@ df_row = df_row.replace(np.nan, 'Unknown')
 
 total_rows = row_sheet -1
 print(total_rows)
-total_rows = total_rows // 50
+total_rows = total_rows // 1000
 print(total_rows)
 
 splitted_dataframe = np.array_split(df_row, total_rows)
